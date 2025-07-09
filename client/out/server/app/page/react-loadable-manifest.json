@@ -1,0 +1,30 @@
+{
+  "[project]/src/components/Preview/PreviewPane.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/Preview/PreviewPane.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_@codesandbox_sandpack-client_dist_84b30b2b._.js",
+      "static/chunks/node_modules_@codemirror_state_dist_index_9b015ec1.js",
+      "static/chunks/node_modules_@codemirror_view_dist_index_201017eb.js",
+      "static/chunks/node_modules_@codesandbox_sandpack-react_dist_index_mjs_01064b46._.js",
+      "static/chunks/node_modules_4aab2fa7._.js",
+      "static/chunks/src_components_10d845c8._.js",
+      "static/chunks/src_components_Preview_PreviewPane_tsx_8d5c28ed._.js"
+    ]
+  },
+  "[project]/src/components/Editor/CodeEditor.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/Editor/CodeEditor.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/node_modules_@monaco-editor_react_dist_index_mjs_2b9e7dfe._.js",
+      "static/chunks/node_modules_973c80f5._.js",
+      "static/chunks/src_components_Editor_CodeEditor_tsx_89df144d._.js",
+      "static/chunks/src_components_Editor_CodeEditor_tsx_8d5c28ed._.js"
+    ]
+  },
+  "[project]/src/components/Terminal/TerminalWindow.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/src/components/Terminal/TerminalWindow.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/_29563a00._.js",
+      "static/chunks/src_components_Terminal_TerminalWindow_tsx_8d5c28ed._.js"
+    ]
+  }
+}

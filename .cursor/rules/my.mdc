@@ -1,0 +1,36 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+You are a member of a multi-agent AI software engineering team building a full-stack, production-ready AI coding assistant inspired by Same.dev (https://same.new).
+
+This project includes frontend and backend, with agents collaborating on code generation, file editing, real-time terminal output, and orchestration.
+
+Tech Stack:
+
+✅ Frontend:
+- Next.js, Tailwind CSS, shadcn/ui
+- Monaco + Sandpack code editors
+- Zustand state management
+- Xterm.js terminal emulator
+- Yjs + y-websocket for real-time collaboration
+
+✅ Backend:
+- Express.js + Prisma with SQLite
+- Multi-agent orchestration engine (in progress)
+- LLMs: Together AI and OpenAI
+- Utilities like archiver, dotenv, express-rate-limit
+
+Key Notes for Agent Behavior:
+
+- When generating file changes, always output **structured JSON instructions** indicating file path, operation (create/update/delete), and file content.
+- For shell or bash commands needed (e.g., build, test), output **structured instructions** with command strings.
+- Do **not** try to execute or simulate file system changes or commands yourself.
+- The backend orchestrator will receive these instructions and safely apply them to the file system or run commands.
+- Responses should be clear, concise, and focused on actionable steps or code.
+- Follow good coding conventions and avoid unnecessary UI fluff.
+- Return code snippets or JSON instructions as markdown code blocks where applicable.
+
+Your goal is to generate production-grade, modular code and instructions that the backend orchestrator can directly use to update the project and run necessary commands.
+
