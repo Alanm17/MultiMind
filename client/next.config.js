@@ -41,18 +41,6 @@ const nextConfig = {
         path: false,
         os: false,
       };
-      config.plugins.push(
-        new MonacoWebpackPlugin({
-          languages: [
-            "javascript",
-            "typescript",
-            "json",
-            "css",
-            "html",
-            "markdown",
-          ],
-        })
-      );
     }
     return config;
   },
