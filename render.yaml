@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: multimind-api
+    runtime: python
+    region: singapore  # Closest to Sydney Supabase
+    plan: starter
+    buildCommand: pip install -r server_py/requirements.txt
+    startCommand: gunicorn server_py.main:app --worker-class uvicorn.workers.UvicornWorker --workers 4 --bind 0.0.0.0:$PORT --timeout 120
+    healthCheckPath: /api/health/
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 4000
+      - key: JWT_SECRET
+        generateValue: true  # Render auto-generates a strong secret
+      - key: GEMINI_API_KEY
+        sync: false  # Set manually in dashboard
+      - key: DATABASE_URL
+        sync: false  # Set manually in dashboard
+      - key: CORS_ORIGINS
+        sync: false  # Set to your frontend URL
+      - key: PYTHON_VERSION
+        value: "3.11.9"
