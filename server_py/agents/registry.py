@@ -14,7 +14,7 @@ AGENT_CONFIGS = {
         "temperature": 0.3
     },
     "Coder Agent": {
-        "model": "gemini-2.5-pro",
+        "model": "gemini-2.5-flash",
         "systemMessage": "You are a Senior Full-Stack Engineer. Write clean, efficient, and well-commented code.",
         "capabilities": ["coding", "implementation", "refactoring"],
         "maxTokens": 8192,
@@ -63,7 +63,7 @@ AGENT_CONFIGS = {
         "temperature": 0.6
     },
     "Reviewer Agent": {
-        "model": "gemini-2.5-pro",
+        "model": "gemini-2.5-flash",
         "systemMessage": "You are a Code Reviewer. Review code for style, anti-patterns, and logic errors.",
         "capabilities": ["review", "linting", "quality"],
         "maxTokens": 4096,
