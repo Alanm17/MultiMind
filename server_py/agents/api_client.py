@@ -1,75 +1,55 @@
-import httpx
 import json
 import asyncio
+from google import genai
+from google.genai import types
 from ..config import settings
 
-class TogetherAPIClient:
+client = genai.Client(api_key=settings.gemini_api_key)
+
+class GeminiAPIClient:
     def __init__(self):
-        self.api_key = settings.together_api_key
-        self.base_url = "https://api.together.xyz/v1"
-        self.headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json"
-        }
-        self.semaphore = asyncio.Semaphore(5) # limit concurrent requests
+        self.semaphore = asyncio.Semaphore(5)  # Limit concurrent requests
 
     async def call_agent(self, agent_name: str, config: dict, prompt: str, context: list = None):
         async with self.semaphore:
-            messages = [
-                {"role": "system", "content": config["systemMessage"]}
-            ]
+            # Build contents from context + prompt
+            contents = []
             if context:
-                messages.extend(context)
-            messages.append({"role": "user", "content": prompt})
-            
-            payload = {
-                "model": config["model"],
-                "messages": messages,
-                "max_tokens": config.get("maxTokens", 2048),
-                "temperature": config.get("temperature", 0.7),
-                "stream": False
-            }
-            
-            async with httpx.AsyncClient(timeout=120.0) as client:
-                response = await client.post(
-                    f"{self.base_url}/chat/completions",
-                    headers=self.headers,
-                    json=payload
+                for msg in context:
+                    role = "user" if msg.get("role") == "user" else "model"
+                    contents.append(types.Content(role=role, parts=[types.Part(text=msg["content"])]))
+            contents.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
+
+            response = await client.aio.models.generate_content(
+                model=config["model"],
+                contents=contents,
+                config=types.GenerateContentConfig(
+                    system_instruction=config["systemMessage"],
+                    max_output_tokens=config.get("maxTokens", 2048),
+                    temperature=config.get("temperature", 0.7),
                 )
-                response.raise_for_status()
-                data = response.json()
-                return data["choices"][0]["message"]["content"]
-                
+            )
+            return response.text
+
     async def call_agent_stream(self, agent_name: str, config: dict, prompt: str, context: list = None):
         async with self.semaphore:
-            messages = [
-                {"role": "system", "content": config["systemMessage"]}
-            ]
+            contents = []
             if context:
-                messages.extend(context)
-            messages.append({"role": "user", "content": prompt})
-            
-            payload = {
-                "model": config["model"],
-                "messages": messages,
-                "max_tokens": config.get("maxTokens", 2048),
-                "temperature": config.get("temperature", 0.7),
-                "stream": True
-            }
-            
-            async with httpx.AsyncClient(timeout=120.0) as client:
-                async with client.stream("POST", f"{self.base_url}/chat/completions", headers=self.headers, json=payload) as response:
-                    response.raise_for_status()
-                    async for line in response.aiter_lines():
-                        if line.startswith("data: "):
-                            data_str = line[6:]
-                            if data_str == "[DONE]":
-                                break
-                            try:
-                                data = json.loads(data_str)
-                                if data["choices"][0]["delta"].get("content"):
-                                    yield data["choices"][0]["delta"]["content"]
-                            except:
-                                pass
+                for msg in context:
+                    role = "user" if msg.get("role") == "user" else "model"
+                    contents.append(types.Content(role=role, parts=[types.Part(text=msg["content"])]))
+            contents.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
 
-api_client = TogetherAPIClient()
+            async for chunk in client.aio.models.generate_content_stream(
+                model=config["model"],
+                contents=contents,
+                config=types.GenerateContentConfig(
+                    system_instruction=config["systemMessage"],
+                    max_output_tokens=config.get("maxTokens", 2048),
+                    temperature=config.get("temperature", 0.7),
+                )
+            ):
+                if chunk.text:
+                    yield chunk.text
+
+api_client = GeminiAPIClient()

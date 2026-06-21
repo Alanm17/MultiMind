@@ -4,8 +4,11 @@ from .config import settings
 
 engine = create_async_engine(
     settings.database_url,
-    connect_args={"check_same_thread": False}, # Needed for SQLite
     echo=False,
+    pool_size=5,
+    max_overflow=10,
+    pool_pre_ping=True,
+    connect_args={"ssl": "require"},  # Supabase requires SSL
 )
 
 AsyncSessionLocal = async_sessionmaker(

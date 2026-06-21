@@ -1,19 +1,21 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Integer, ForeignKey, JSON
+from sqlalchemy import Column, String, Boolean, BigInteger, Integer, ForeignKey, JSON
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
-from datetime import datetime
 import uuid
+import time
 from .database import Base
 
 def generate_uuid():
     return str(uuid.uuid4())
+
+def epoch_ms():
+    return int(time.time() * 1000)
 
 class User(Base):
     __tablename__ = "User"
     id = Column(String, primary_key=True, default=generate_uuid)
     email = Column(String, unique=True, nullable=False)
     passwordHash = Column(String, nullable=False)
-    createdAt = Column(DateTime, default=datetime.utcnow)
+    createdAt = Column(BigInteger, default=epoch_ms)
     
     projects = relationship("Project", back_populates="user", cascade="all, delete-orphan")
 
@@ -22,7 +24,7 @@ class Project(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     userId = Column(String, ForeignKey("User.id"), nullable=False)
     name = Column(String, nullable=False)
-    createdAt = Column(DateTime, default=datetime.utcnow)
+    createdAt = Column(BigInteger, default=epoch_ms)
     
     user = relationship("User", back_populates="projects")
     files = relationship("ProjectFile", back_populates="project", cascade="all, delete-orphan")
@@ -49,7 +51,7 @@ class AgentTask(Base):
     agentName = Column(String, nullable=False)
     taskDescription = Column(String, nullable=False)
     status = Column(String, nullable=False)
-    createdAt = Column(DateTime, default=datetime.utcnow)
+    createdAt = Column(BigInteger, default=epoch_ms)
     
     project = relationship("Project", back_populates="agentTasks")
 
@@ -58,8 +60,8 @@ class ChatSession(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     projectId = Column(String, ForeignKey("Project.id"), nullable=False)
     name = Column(String, nullable=False)
-    createdAt = Column(DateTime, default=datetime.utcnow)
-    updatedAt = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    createdAt = Column(BigInteger, default=epoch_ms)
+    updatedAt = Column(BigInteger, default=epoch_ms, onupdate=epoch_ms)
     maxMessages = Column(Integer, nullable=True)
     maxTokens = Column(Integer, nullable=True)
     
@@ -74,7 +76,7 @@ class ChatMessage(Base):
     sessionId = Column(String, ForeignKey("ChatSession.id"), nullable=False)
     role = Column(String, nullable=False)
     content = Column(String, nullable=False)
-    createdAt = Column(DateTime, default=datetime.utcnow)
+    createdAt = Column(BigInteger, default=epoch_ms)
     
     session = relationship("ChatSession", back_populates="messages")
 
@@ -83,7 +85,7 @@ class MemorySummary(Base):
     id = Column(String, primary_key=True, default=generate_uuid)
     sessionId = Column(String, ForeignKey("ChatSession.id"), unique=True, nullable=False)
     summary = Column(String, nullable=False)
-    lastUpdated = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    lastUpdated = Column(BigInteger, default=epoch_ms, onupdate=epoch_ms)
     
     session = relationship("ChatSession", back_populates="memorySummaries")
 
@@ -96,7 +98,7 @@ class AgentTraceLog(Base):
     prompt = Column(String, nullable=False)
     response = Column(String, nullable=False)
     context = Column(JSON, nullable=False)
-    createdAt = Column(DateTime, default=datetime.utcnow)
+    createdAt = Column(BigInteger, default=epoch_ms)
     
     session = relationship("ChatSession", back_populates="traceLogs")
     project = relationship("Project", back_populates="traceLogs")
@@ -107,7 +109,7 @@ class ProjectMemory(Base):
     projectId = Column(String, ForeignKey("Project.id"), nullable=False)
     key = Column(String, nullable=False)
     value = Column(String, nullable=False)
-    createdAt = Column(DateTime, default=datetime.utcnow)
-    updatedAt = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    createdAt = Column(BigInteger, default=epoch_ms)
+    updatedAt = Column(BigInteger, default=epoch_ms, onupdate=epoch_ms)
     
     project = relationship("Project", back_populates="memories")
